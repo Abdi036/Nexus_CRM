@@ -1,18 +1,30 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
-import { useAuth } from "@/lib/auth-context"
-import { useCRMStore } from "@/lib/crm-store"
-import { AppSidebar } from "@/components/app-sidebar"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/lib/auth-context";
+import { useCRMStore } from "@/lib/crm-store";
+import { AppSidebar } from "@/components/app-sidebar";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Dialog,
   DialogContent,
@@ -20,20 +32,27 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Badge } from "@/components/ui/badge"
-import { Plus, AlertCircle, Edit } from "lucide-react"
-import { useToast } from "@/hooks/use-toast"
-import type { TicketPriority, TicketStatus } from "@/lib/mock-data"
+} from "@/components/ui/dialog";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { Plus, AlertCircle, Edit } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import type { TicketPriority, TicketStatus } from "@/lib/mock-data";
 
 export default function TicketsPage() {
-  const router = useRouter()
-  const { user, isAuthenticated } = useAuth()
-  const { tickets, addTicket, updateTicket, customers, users } = useCRMStore()
-  const { toast } = useToast()
-  const [isAddOpen, setIsAddOpen] = useState(false)
-  const [editingId, setEditingId] = useState<string | null>(null)
+  const router = useRouter();
+  const { user, isAuthenticated } = useAuth();
+  const { tickets, addTicket, updateTicket, customers, users } = useCRMStore();
+  const { toast } = useToast();
+  const [isAddOpen, setIsAddOpen] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -41,33 +60,49 @@ export default function TicketsPage() {
     status: "open" as TicketStatus,
     customerId: "",
     assignedTo: "",
-  })
+  });
 
   useEffect(() => {
     if (!isAuthenticated) {
-      router.push("/")
+      router.push("/");
     }
-  }, [isAuthenticated, router])
+  }, [isAuthenticated, router]);
 
-  if (!user) return null
+  if (!user) return null;
 
-  const filteredTickets = user.role === "support_agent" ? tickets.filter((t) => t.assignedTo === user.id) : tickets
+  const filteredTickets =
+    user.role === "support_agent"
+      ? tickets.filter((t) => t.assignedTo === user.id)
+      : tickets;
 
-  const supportAgents = users.filter((u) => u.role === "support_agent")
+  const supportAgents = users.filter((u) => u.role === "support_agent");
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     if (editingId) {
-      updateTicket(editingId, formData)
-      toast({ title: "Ticket Updated", description: "Support ticket has been updated." })
-      setEditingId(null)
+      updateTicket(editingId, formData);
+      toast({
+        title: "Ticket Updated",
+        description: "Support ticket has been updated.",
+      });
+      setEditingId(null);
     } else {
-      addTicket({ ...formData, createdBy: user.id })
-      toast({ title: "Ticket Created", description: "New support ticket has been created." })
-      setIsAddOpen(false)
+      addTicket({ ...formData, createdBy: user.id });
+      toast({
+        title: "Ticket Created",
+        description: "New support ticket has been created.",
+      });
+      setIsAddOpen(false);
     }
-    setFormData({ title: "", description: "", priority: "medium", status: "open", customerId: "", assignedTo: "" })
-  }
+    setFormData({
+      title: "",
+      description: "",
+      priority: "medium",
+      status: "open",
+      customerId: "",
+      assignedTo: "",
+    });
+  };
 
   const handleEdit = (ticket: (typeof tickets)[0]) => {
     setFormData({
@@ -77,51 +112,55 @@ export default function TicketsPage() {
       status: ticket.status,
       customerId: ticket.customerId,
       assignedTo: ticket.assignedTo || "",
-    })
-    setEditingId(ticket.id)
-    setIsAddOpen(true)
-  }
+    });
+    setEditingId(ticket.id);
+    setIsAddOpen(true);
+  };
 
   const getPriorityColor = (priority: TicketPriority) => {
     switch (priority) {
       case "low":
-        return "bg-green-500/10 text-green-500"
+        return "bg-green-500/10 text-green-500";
       case "medium":
-        return "bg-yellow-500/10 text-yellow-500"
+        return "bg-yellow-500/10 text-yellow-500";
       case "high":
-        return "bg-red-500/10 text-red-500"
+        return "bg-red-500/10 text-red-500";
     }
-  }
+  };
 
   const getStatusColor = (status: TicketStatus) => {
     switch (status) {
       case "open":
-        return "bg-blue-500/10 text-blue-500"
+        return "bg-blue-500/10 text-blue-500";
       case "in_progress":
-        return "bg-yellow-500/10 text-yellow-500"
+        return "bg-yellow-500/10 text-yellow-500";
       case "closed":
-        return "bg-gray-500/10 text-gray-500"
+        return "bg-gray-500/10 text-gray-500";
     }
-  }
+  };
 
   return (
-    <div className="flex h-screen bg-background">
+    <div className="flex min-h-screen bg-transparent pl-64 backdrop-blur-[2px]">
       <AppSidebar />
-      <main className="flex-1 overflow-y-auto">
-        <div className="container py-8">
+      <main className="flex-1 overflow-y-auto px-6 py-8">
+        <div className="mx-auto max-w-6xl space-y-8">
           <div className="mb-8 flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-foreground">Support Tickets</h1>
+              <h1 className="text-3xl font-bold text-foreground">
+                Support Tickets
+              </h1>
               <p className="text-muted-foreground">
-                {user.role === "support_agent" ? "Manage your assigned tickets" : "Track customer support requests"}
+                {user.role === "support_agent"
+                  ? "Manage your assigned tickets"
+                  : "Track customer support requests"}
               </p>
             </div>
             <Dialog
               open={isAddOpen}
               onOpenChange={(open) => {
-                setIsAddOpen(open)
+                setIsAddOpen(open);
                 if (!open) {
-                  setEditingId(null)
+                  setEditingId(null);
                   setFormData({
                     title: "",
                     description: "",
@@ -129,7 +168,7 @@ export default function TicketsPage() {
                     status: "open",
                     customerId: "",
                     assignedTo: "",
-                  })
+                  });
                 }
               }}
             >
@@ -141,9 +180,13 @@ export default function TicketsPage() {
               </DialogTrigger>
               <DialogContent className="max-w-2xl">
                 <DialogHeader>
-                  <DialogTitle>{editingId ? "Edit Ticket" : "Create New Ticket"}</DialogTitle>
+                  <DialogTitle>
+                    {editingId ? "Edit Ticket" : "Create New Ticket"}
+                  </DialogTitle>
                   <DialogDescription>
-                    {editingId ? "Update ticket information below." : "Create a new support ticket for a customer."}
+                    {editingId
+                      ? "Update ticket information below."
+                      : "Create a new support ticket for a customer."}
                   </DialogDescription>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-4">
@@ -152,7 +195,9 @@ export default function TicketsPage() {
                     <Input
                       id="title"
                       value={formData.title}
-                      onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, title: e.target.value })
+                      }
                       required
                     />
                   </div>
@@ -162,7 +207,12 @@ export default function TicketsPage() {
                       id="description"
                       placeholder="Describe the issue..."
                       value={formData.description}
-                      onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          description: e.target.value,
+                        })
+                      }
                       required
                       rows={4}
                     />
@@ -172,7 +222,9 @@ export default function TicketsPage() {
                       <Label htmlFor="priority">Priority</Label>
                       <Select
                         value={formData.priority}
-                        onValueChange={(value: TicketPriority) => setFormData({ ...formData, priority: value })}
+                        onValueChange={(value: TicketPriority) =>
+                          setFormData({ ...formData, priority: value })
+                        }
                       >
                         <SelectTrigger>
                           <SelectValue />
@@ -188,14 +240,18 @@ export default function TicketsPage() {
                       <Label htmlFor="status">Status</Label>
                       <Select
                         value={formData.status}
-                        onValueChange={(value: TicketStatus) => setFormData({ ...formData, status: value })}
+                        onValueChange={(value: TicketStatus) =>
+                          setFormData({ ...formData, status: value })
+                        }
                       >
                         <SelectTrigger>
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="open">Open</SelectItem>
-                          <SelectItem value="in_progress">In Progress</SelectItem>
+                          <SelectItem value="in_progress">
+                            In Progress
+                          </SelectItem>
                           <SelectItem value="closed">Closed</SelectItem>
                         </SelectContent>
                       </Select>
@@ -205,7 +261,9 @@ export default function TicketsPage() {
                     <Label htmlFor="customerId">Customer</Label>
                     <Select
                       value={formData.customerId}
-                      onValueChange={(value) => setFormData({ ...formData, customerId: value })}
+                      onValueChange={(value) =>
+                        setFormData({ ...formData, customerId: value })
+                      }
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Select customer" />
@@ -223,7 +281,9 @@ export default function TicketsPage() {
                     <Label htmlFor="assignedTo">Assign To</Label>
                     <Select
                       value={formData.assignedTo}
-                      onValueChange={(value) => setFormData({ ...formData, assignedTo: value })}
+                      onValueChange={(value) =>
+                        setFormData({ ...formData, assignedTo: value })
+                      }
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Select support agent" />
@@ -247,8 +307,14 @@ export default function TicketsPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle>{user.role === "support_agent" ? "My Tickets" : "All Support Tickets"}</CardTitle>
-              <CardDescription>Customer support requests and their status</CardDescription>
+              <CardTitle>
+                {user.role === "support_agent"
+                  ? "My Tickets"
+                  : "All Support Tickets"}
+              </CardTitle>
+              <CardDescription>
+                Customer support requests and their status
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <Table>
@@ -265,35 +331,53 @@ export default function TicketsPage() {
                 </TableHeader>
                 <TableBody>
                   {filteredTickets.map((ticket) => {
-                    const customer = customers.find((c) => c.id === ticket.customerId)
-                    const assignedUser = users.find((u) => u.id === ticket.assignedTo)
+                    const customer = customers.find(
+                      (c) => c.id === ticket.customerId
+                    );
+                    const assignedUser = users.find(
+                      (u) => u.id === ticket.assignedTo
+                    );
                     return (
                       <TableRow key={ticket.id}>
                         <TableCell>
                           <div>
                             <p className="font-medium">{ticket.title}</p>
-                            <p className="text-sm text-muted-foreground line-clamp-1">{ticket.description}</p>
+                            <p className="text-sm text-muted-foreground line-clamp-1">
+                              {ticket.description}
+                            </p>
                           </div>
                         </TableCell>
                         <TableCell>{customer?.name || "Unknown"}</TableCell>
                         <TableCell>
                           <Badge className={getPriorityColor(ticket.priority)}>
-                            {ticket.priority === "high" && <AlertCircle className="mr-1 h-3 w-3" />}
+                            {ticket.priority === "high" && (
+                              <AlertCircle className="mr-1 h-3 w-3" />
+                            )}
                             {ticket.priority}
                           </Badge>
                         </TableCell>
                         <TableCell>
-                          <Badge className={getStatusColor(ticket.status)}>{ticket.status.replace("_", " ")}</Badge>
+                          <Badge className={getStatusColor(ticket.status)}>
+                            {ticket.status.replace("_", " ")}
+                          </Badge>
                         </TableCell>
-                        <TableCell>{assignedUser?.name || "Unassigned"}</TableCell>
-                        <TableCell>{ticket.createdAt.toLocaleDateString()}</TableCell>
                         <TableCell>
-                          <Button variant="ghost" size="sm" onClick={() => handleEdit(ticket)}>
+                          {assignedUser?.name || "Unassigned"}
+                        </TableCell>
+                        <TableCell>
+                          {ticket.createdAt.toLocaleDateString()}
+                        </TableCell>
+                        <TableCell>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleEdit(ticket)}
+                          >
                             <Edit className="h-4 w-4" />
                           </Button>
                         </TableCell>
                       </TableRow>
-                    )
+                    );
                   })}
                 </TableBody>
               </Table>
@@ -302,5 +386,5 @@ export default function TicketsPage() {
         </div>
       </main>
     </div>
-  )
+  );
 }
