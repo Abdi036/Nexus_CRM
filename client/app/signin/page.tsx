@@ -13,6 +13,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { User } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
@@ -48,8 +49,13 @@ export default function SignInPage() {
   return (
     <div className="flex min-h-screen items-center justify-center px-4 backdrop-blur-sm">
       <Card className="w-full max-w-md border-white/15 bg-white/5 text-white shadow-2xl shadow-emerald-500/10">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold">Simple CRM</CardTitle>
+        <CardHeader className="space-y-3 text-center">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-white shadow-md shadow-emerald-500/20">
+            <Link href="/">
+              <User className="h-6 w-6" />
+            </Link>
+          </div>
+          <CardTitle className="text-2xl font-bold">Welcome Back</CardTitle>
           <CardDescription>
             Enter your credentials to access the system
           </CardDescription>

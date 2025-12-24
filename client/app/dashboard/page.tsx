@@ -254,7 +254,7 @@ export default function DashboardPage() {
 
   const adminCharts = (
     <>
-      <Card className="border-2 border-red-500">
+      <Card>
         <CardHeader>
           <CardTitle>User Distribution</CardTitle>
           <CardDescription>Users by role in the system</CardDescription>

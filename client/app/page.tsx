@@ -8,6 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import Image from "next/image";
 
 const features = [
   {
@@ -48,7 +49,16 @@ export default function LandingPage() {
 
       <header className="border-b border-white/10 bg-white/5 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-          <div className="text-lg font-semibold tracking-tight">Simple CRM</div>
+            <div className="flex items-center gap-2 text-lg font-semibold tracking-tight">
+            <Image
+              src="/NavIcon.png"
+              width={32}
+              height={32}
+              alt="Nexus CRM Logo"
+              className="rounded-sm"
+            />
+            <span className="leading-none">Nexus CRM</span>
+            </div>
           <div className="flex items-center gap-3">
             <Button
               asChild
@@ -78,8 +88,8 @@ export default function LandingPage() {
                 Close deals faster. Support customers flawlessly.
               </h1>
               <p className="text-lg text-slate-200 sm:text-xl">
-                Simple CRM keeps every revenue motion in one canvas—pipeline,
-                success, and support—so leadership sees clarity and teams move
+                Nexus CRM keeps every revenue motion in one canvaspipeline,
+                success, and support so leadership sees clarity and teams move
                 with confidence.
               </p>
             </div>

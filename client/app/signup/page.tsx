@@ -18,6 +18,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/lib/auth-context";
 import { useCRMStore } from "@/lib/crm-store";
+import { User } from "lucide-react";
 
 export default function SignupPage() {
   const [name, setName] = useState("");
@@ -49,18 +50,23 @@ export default function SignupPage() {
     }
 
     addUser({ name, email, password, role: "sales_rep" });
-    toast({ title: "Account created", description: "Welcome to Simple CRM" });
+    toast({ title: "Account created", description: "Welcome to Nexus CRM" });
     router.push("/dashboard");
   };
 
   return (
     <div className="flex min-h-screen items-center justify-center px-4 backdrop-blur-sm">
       <Card className="w-full max-w-md border-white/15 bg-white/5 text-white shadow-2xl shadow-emerald-500/10">
-        <CardHeader className="space-y-1">
+        <CardHeader className="space-y-3 text-center">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-white shadow-md shadow-emerald-500/20">
+            <Link href="/">
+              <User className="h-6 w-6" />
+            </Link>
+          </div>
           <CardTitle className="text-2xl font-bold">
             Create your account
           </CardTitle>
-          <CardDescription>Sign up to start using Simple CRM</CardDescription>
+          <CardDescription>Sign up to start using Nexus CRM</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">

@@ -62,9 +62,7 @@ export function AppSidebar() {
   return (
     <div className="fixed left-0 top-0 z-40 flex h-screen w-64 flex-col overflow-y-auto border-r border-sidebar-border bg-sidebar/90 backdrop-blur shadow-xl shadow-emerald-500/10">
       <div className="flex h-16 items-center border-b border-sidebar-border px-6">
-        <h1 className="text-xl font-bold text-sidebar-foreground">
-          Simple CRM
-        </h1>
+        <h1 className="text-xl font-bold text-sidebar-foreground">Nexus CRM</h1>
       </div>
 
       <nav className="flex-1 space-y-1 px-3 py-4">
