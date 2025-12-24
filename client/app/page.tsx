@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
@@ -9,6 +11,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import Image from "next/image";
+import { useAuth } from "@/lib/auth-context";
 
 const features = [
   {
@@ -36,6 +39,8 @@ const heroStats = [
 const marquee = ["Sales", "Success", "Support", "Ops", "Leadership"];
 
 export default function LandingPage() {
+  const { isAuthenticated } = useAuth();
+
   return (
     <div className="relative overflow-hidden bg-linear-to-br from-slate-950 via-[#0f1b2e] to-[#0c2f3a] text-white">
       <div
@@ -60,19 +65,30 @@ export default function LandingPage() {
             <span className="leading-none">Nexus CRM</span>
             </div>
           <div className="flex items-center gap-3">
-            <Button
-              asChild
-              variant="ghost"
-              className="text-white hover:bg-white/10"
-            >
-              <Link href="/signin">Sign in</Link>
-            </Button>
-            <Button
-              asChild
-              className="bg-emerald-400 text-slate-900 hover:bg-emerald-300"
-            >
-              <Link href="/signup">Get started</Link>
-            </Button>
+              {isAuthenticated ? (
+                <Button
+                  asChild
+                  className="bg-emerald-400 text-slate-900 hover:bg-emerald-300"
+                >
+                  <Link href="/dashboard">Dashboard</Link>
+                </Button>
+              ) : (
+                <>
+                  <Button
+                    asChild
+                    variant="ghost"
+                    className="text-white hover:bg-white/10"
+                  >
+                    <Link href="/signin">Sign in</Link>
+                  </Button>
+                  <Button
+                    asChild
+                    className="bg-emerald-400 text-slate-900 hover:bg-emerald-300"
+                  >
+                    <Link href="/signup">Get started</Link>
+                  </Button>
+                </>
+              )}
           </div>
         </div>
       </header>
@@ -94,21 +110,33 @@ export default function LandingPage() {
               </p>
             </div>
             <div className="flex flex-wrap gap-3">
-              <Button
-                asChild
-                size="lg"
-                className="bg-emerald-400 text-slate-950 hover:bg-emerald-300"
-              >
-                <Link href="/signup">Start free</Link>
-              </Button>
-              <Button
-                asChild
-                size="lg"
-                variant="outline"
-                className="border-white/30 bg-white/5 text-white hover:bg-white/10"
-              >
-                <Link href="/signin">Sign in</Link>
-              </Button>
+              {isAuthenticated ? (
+                <Button
+                  asChild
+                  size="lg"
+                  className="bg-emerald-400 text-slate-950 hover:bg-emerald-300"
+                >
+                  <Link href="/dashboard">Dashboard</Link>
+                </Button>
+              ) : (
+                <>
+                  <Button
+                    asChild
+                    size="lg"
+                    className="bg-emerald-400 text-slate-950 hover:bg-emerald-300"
+                  >
+                    <Link href="/signup">Start free</Link>
+                  </Button>
+                  <Button
+                    asChild
+                    size="lg"
+                    variant="outline"
+                    className="border-white/30 bg-white/5 text-white hover:bg-white/10"
+                  >
+                    <Link href="/signin">Sign in</Link>
+                  </Button>
+                </>
+              )}
             </div>
             <div className="flex flex-wrap gap-6 text-sm text-emerald-100/80">
               {heroStats.map((stat) => (
