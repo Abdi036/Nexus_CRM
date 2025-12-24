@@ -2,111 +2,134 @@
 
 import type React from "react";
 import { createContext, useContext, useState, useEffect } from "react";
-import { type User, type UserRole, mockUsers } from "./mock-data";
+import { authApi, usersApi, type User, type UserRole } from "./api";
 
 interface AuthContextType {
   user: User | null;
-  login: (email: string, password: string) => boolean;
+  users: User[];
+  login: (email: string, password: string) => Promise<boolean>;
   register: (data: {
     name: string;
     email: string;
     password: string;
     role?: UserRole;
     avatarUrl?: string;
-  }) => {
+  }) => Promise<{
     success: boolean;
     message?: string;
-  };
+  }>;
   updateProfile: (data: {
     name?: string;
     password?: string;
     avatarUrl?: string;
-  }) => {
+  }) => Promise<{
     success: boolean;
     message?: string;
-  };
+  }>;
   logout: () => void;
   isAuthenticated: boolean;
+  isLoading: boolean;
+  refreshUsers: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [users, setUsers] = useState<User[]>(mockUsers);
+  const [users, setUsers] = useState<User[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
+  // Check for existing session on mount
   useEffect(() => {
-    // Check for existing session
-    const storedUser = localStorage.getItem("crm_user");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
+    const checkAuth = async () => {
+      try {
+        const storedUser = localStorage.getItem("crm_user");
+        const token = localStorage.getItem("crm_token");
+        
+        if (storedUser && token) {
+          // Verify token is still valid
+          try {
+            const response = await authApi.getMe();
+            if (response.success) {
+              setUser(response.user);
+            } else {
+              // Token invalid, clear storage
+              authApi.logout();
+              setUser(null);
+            }
+          } catch {
+            // Token expired or invalid
+            authApi.logout();
+            setUser(null);
+          }
+        }
+      } catch (error) {
+        console.error("Auth check error:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-    const storedUsers = localStorage.getItem("crm_users");
-    if (storedUsers) {
-      const parsedUsers: User[] = JSON.parse(storedUsers).map((u: User) => ({
-        ...u,
-        createdAt: new Date(u.createdAt),
-      }));
-      setUsers(parsedUsers);
-    }
+    checkAuth();
   }, []);
 
-  const persistUsers = (updatedUsers: User[]) => {
-    setUsers(updatedUsers);
-    localStorage.setItem("crm_users", JSON.stringify(updatedUsers));
-  };
-
-  const login = (email: string, password: string): boolean => {
-    const foundUser = users.find(
-      (u) => u.email === email && u.password === password
-    );
-    if (foundUser) {
-      const userWithoutPassword = { ...foundUser };
-      setUser(userWithoutPassword);
-      localStorage.setItem("crm_user", JSON.stringify(userWithoutPassword));
-      return true;
+  // Fetch users when authenticated (for admin)
+  useEffect(() => {
+    if (user?.role === "admin") {
+      refreshUsers();
     }
-    return false;
+  }, [user?.role]);
+
+  const refreshUsers = async () => {
+    try {
+      const response = await usersApi.getAll();
+      if (response.success) {
+        setUsers(response.users);
+      }
+    } catch (error) {
+      console.error("Failed to fetch users:", error);
+    }
   };
 
-  const register = (data: {
+  const login = async (email: string, password: string): Promise<boolean> => {
+    try {
+      const response = await authApi.login(email, password);
+      if (response.success && response.user) {
+        setUser(response.user);
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error("Login error:", error);
+      return false;
+    }
+  };
+
+  const register = async (data: {
     name: string;
     email: string;
     password: string;
     role?: UserRole;
   }) => {
-    const role = data.role ?? "sales_rep";
-    const existing = users.find(
-      (u) => u.email.toLowerCase() === data.email.toLowerCase()
-    );
-    if (existing) {
+    try {
+      const response = await authApi.register(data);
+      if (response.success && response.user) {
+        setUser(response.user);
+        return { success: true };
+      }
       return {
         success: false,
-        message: "An account with this email already exists",
+        message: "Registration failed",
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: error instanceof Error ? error.message : "Registration failed",
       };
     }
-
-    const newUser: User = {
-      id: `u${Date.now()}`,
-      name: data.name,
-      email: data.email,
-      role,
-      password: data.password,
-      createdAt: new Date(),
-      avatarUrl: data.avatarUrl,
-    };
-
-    const updatedUsers = [...users, newUser];
-    persistUsers(updatedUsers);
-    const sessionUser = { ...newUser };
-    setUser(sessionUser);
-    localStorage.setItem("crm_user", JSON.stringify(sessionUser));
-
-    return { success: true };
   };
 
-  const updateProfile = (data: {
+  const updateProfile = async (data: {
     name?: string;
     password?: string;
     avatarUrl?: string;
@@ -115,35 +138,39 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return { success: false, message: "Not authenticated" };
     }
 
-    const updatedUser: User = {
-      ...user,
-      name: data.name ?? user.name,
-      password: data.password ?? user.password,
-      avatarUrl: data.avatarUrl ?? user.avatarUrl,
-    };
-
-    const updatedUsers = users.map((u) => (u.id === user.id ? updatedUser : u));
-    persistUsers(updatedUsers);
-    setUser({ ...updatedUser });
-    localStorage.setItem("crm_user", JSON.stringify({ ...updatedUser }));
-
-    return { success: true };
+    try {
+      const response = await authApi.updateProfile(data);
+      if (response.success && response.user) {
+        setUser(response.user);
+        return { success: true };
+      }
+      return { success: false, message: "Update failed" };
+    } catch (error) {
+      return {
+        success: false,
+        message: error instanceof Error ? error.message : "Update failed",
+      };
+    }
   };
 
   const logout = () => {
+    authApi.logout();
     setUser(null);
-    localStorage.removeItem("crm_user");
+    setUsers([]);
   };
 
   return (
     <AuthContext.Provider
       value={{
         user,
+        users,
         login,
         register,
         updateProfile,
         logout,
         isAuthenticated: !!user,
+        isLoading,
+        refreshUsers,
       }}
     >
       {children}

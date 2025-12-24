@@ -39,9 +39,9 @@ export default function ProfilePage() {
     }
   }, [isAuthenticated, router, user]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const result = updateProfile({
+    const result = await updateProfile({
       name,
       password: password || undefined,
       avatarUrl: avatarUrl || undefined,

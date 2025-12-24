@@ -54,7 +54,7 @@ export default function LandingPage() {
 
       <header className="border-b border-white/10 bg-white/5 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-            <div className="flex items-center gap-2 text-lg font-semibold tracking-tight">
+          <div className="flex items-center gap-2 text-lg font-semibold tracking-tight">
             <Image
               src="/NavIcon.png"
               width={32}
@@ -63,32 +63,32 @@ export default function LandingPage() {
               className="rounded-sm"
             />
             <span className="leading-none">Nexus CRM</span>
-            </div>
+          </div>
           <div className="flex items-center gap-3">
-              {isAuthenticated ? (
+            {isAuthenticated ? (
+              <Button
+                asChild
+                className="bg-emerald-400 text-slate-900 hover:bg-emerald-300"
+              >
+                <Link href="/dashboard">Dashboard</Link>
+              </Button>
+            ) : (
+              <>
+                <Button
+                  asChild
+                  variant="ghost"
+                  className="text-white hover:bg-white/10"
+                >
+                  <Link href="/signin">Sign in</Link>
+                </Button>
                 <Button
                   asChild
                   className="bg-emerald-400 text-slate-900 hover:bg-emerald-300"
                 >
-                  <Link href="/dashboard">Dashboard</Link>
+                  <Link href="/signup">Get started</Link>
                 </Button>
-              ) : (
-                <>
-                  <Button
-                    asChild
-                    variant="ghost"
-                    className="text-white hover:bg-white/10"
-                  >
-                    <Link href="/signin">Sign in</Link>
-                  </Button>
-                  <Button
-                    asChild
-                    className="bg-emerald-400 text-slate-900 hover:bg-emerald-300"
-                  >
-                    <Link href="/signup">Get started</Link>
-                  </Button>
-                </>
-              )}
+              </>
+            )}
           </div>
         </div>
       </header>

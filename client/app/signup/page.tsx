@@ -17,7 +17,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/lib/auth-context";
-import { useCRMStore } from "@/lib/crm-store";
 import { User } from "lucide-react";
 
 export default function SignupPage() {
@@ -26,7 +25,6 @@ export default function SignupPage() {
   const [password, setPassword] = useState("");
 
   const { register, isAuthenticated } = useAuth();
-  const { addUser } = useCRMStore();
   const { toast } = useToast();
   const router = useRouter();
 
@@ -36,9 +34,9 @@ export default function SignupPage() {
     }
   }, [isAuthenticated, router]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const result = register({ name, email, password });
+    const result = await register({ name, email, password });
 
     if (!result.success) {
       toast({
@@ -49,7 +47,6 @@ export default function SignupPage() {
       return;
     }
 
-    addUser({ name, email, password, role: "sales_rep" });
     toast({ title: "Account created", description: "Welcome to Nexus CRM" });
     router.push("/dashboard");
   };
