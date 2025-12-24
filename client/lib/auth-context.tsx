@@ -12,6 +12,15 @@ interface AuthContextType {
     email: string;
     password: string;
     role?: UserRole;
+    avatarUrl?: string;
+  }) => {
+    success: boolean;
+    message?: string;
+  };
+  updateProfile: (data: {
+    name?: string;
+    password?: string;
+    avatarUrl?: string;
   }) => {
     success: boolean;
     message?: string;
@@ -85,6 +94,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       role,
       password: data.password,
       createdAt: new Date(),
+      avatarUrl: data.avatarUrl,
     };
 
     const updatedUsers = [...users, newUser];
@@ -92,6 +102,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const sessionUser = { ...newUser };
     setUser(sessionUser);
     localStorage.setItem("crm_user", JSON.stringify(sessionUser));
+
+    return { success: true };
+  };
+
+  const updateProfile = (data: {
+    name?: string;
+    password?: string;
+    avatarUrl?: string;
+  }) => {
+    if (!user) {
+      return { success: false, message: "Not authenticated" };
+    }
+
+    const updatedUser: User = {
+      ...user,
+      name: data.name ?? user.name,
+      password: data.password ?? user.password,
+      avatarUrl: data.avatarUrl ?? user.avatarUrl,
+    };
+
+    const updatedUsers = users.map((u) => (u.id === user.id ? updatedUser : u));
+    persistUsers(updatedUsers);
+    setUser({ ...updatedUser });
+    localStorage.setItem("crm_user", JSON.stringify({ ...updatedUser }));
 
     return { success: true };
   };
@@ -107,6 +141,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         user,
         login,
         register,
+        updateProfile,
         logout,
         isAuthenticated: !!user,
       }}

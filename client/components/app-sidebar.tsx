@@ -9,11 +9,11 @@ import {
   Settings,
   LogOut,
 } from "lucide-react";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export function AppSidebar() {
   const pathname = usePathname();
@@ -87,14 +87,17 @@ export function AppSidebar() {
       </nav>
 
       <div className="border-t border-sidebar-border p-4">
-        <div className="mb-3 px-2">
+        <Link
+          href="/profile"
+          className="mb-3 block rounded-lg px-2 py-2 transition hover:bg-sidebar-accent/60"
+        >
           <p className="text-sm font-medium text-sidebar-foreground">
             {user.name}
           </p>
           <p className="text-xs text-sidebar-foreground/60">
             {user.role.replace("_", " ")}
           </p>
-        </div>
+        </Link>
         <Button
           variant="ghost"
           className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent"

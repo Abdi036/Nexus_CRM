@@ -1,67 +1,72 @@
 // Mock Data for CRM System
 
-export type UserRole = "admin" | "sales_manager" | "sales_rep" | "support_agent"
+export type UserRole =
+  | "admin"
+  | "sales_manager"
+  | "sales_rep"
+  | "support_agent";
 
 export interface User {
-  id: string
-  name: string
-  email: string
-  role: UserRole
-  password: string // In real app, this would be hashed
-  createdAt: Date
+  id: string;
+  name: string;
+  email: string;
+  role: UserRole;
+  password: string; // In real app, this would be hashed
+  createdAt: Date;
+  avatarUrl?: string;
 }
 
 export interface Customer {
-  id: string
-  name: string
-  email: string
-  phone: string
-  company: string
-  createdAt: Date
-  createdBy: string
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  company: string;
+  createdAt: Date;
+  createdBy: string;
 }
 
-export type LeadStatus = "new" | "contacted" | "qualified" | "converted"
+export type LeadStatus = "new" | "contacted" | "qualified" | "converted";
 
 export interface Lead {
-  id: string
-  name: string
-  email: string
-  phone: string
-  company: string
-  status: LeadStatus
-  assignedTo?: string
-  createdAt: Date
-  createdBy: string
-  convertedToCustomerId?: string
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  company: string;
+  status: LeadStatus;
+  assignedTo?: string;
+  createdAt: Date;
+  createdBy: string;
+  convertedToCustomerId?: string;
 }
 
-export type InteractionType = "call" | "email" | "meeting"
+export type InteractionType = "call" | "email" | "meeting";
 
 export interface Interaction {
-  id: string
-  type: InteractionType
-  notes: string
-  linkedTo: "lead" | "customer"
-  linkedId: string
-  createdBy: string
-  createdAt: Date
+  id: string;
+  type: InteractionType;
+  notes: string;
+  linkedTo: "lead" | "customer";
+  linkedId: string;
+  createdBy: string;
+  createdAt: Date;
 }
 
-export type TicketPriority = "low" | "medium" | "high"
-export type TicketStatus = "open" | "in_progress" | "closed"
+export type TicketPriority = "low" | "medium" | "high";
+export type TicketStatus = "open" | "in_progress" | "closed";
 
 export interface SupportTicket {
-  id: string
-  title: string
-  description: string
-  priority: TicketPriority
-  status: TicketStatus
-  customerId: string
-  assignedTo?: string
-  createdBy: string
-  createdAt: Date
-  updatedAt: Date
+  id: string;
+  title: string;
+  description: string;
+  priority: TicketPriority;
+  status: TicketStatus;
+  customerId: string;
+  assignedTo?: string;
+  createdBy: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 // Mock Users
@@ -106,7 +111,7 @@ export const mockUsers: User[] = [
     password: "emily123",
     createdAt: new Date("2024-01-01"),
   },
-]
+];
 
 // Mock Customers
 export const mockCustomers: Customer[] = [
@@ -146,7 +151,7 @@ export const mockCustomers: Customer[] = [
     createdAt: new Date("2024-04-01"),
     createdBy: "3",
   },
-]
+];
 
 // Mock Leads
 export const mockLeads: Lead[] = [
@@ -205,7 +210,7 @@ export const mockLeads: Lead[] = [
     createdAt: new Date("2024-12-18"),
     createdBy: "2",
   },
-]
+];
 
 // Mock Interactions
 export const mockInteractions: Interaction[] = [
@@ -254,7 +259,7 @@ export const mockInteractions: Interaction[] = [
     createdBy: "3",
     createdAt: new Date("2024-12-02"),
   },
-]
+];
 
 // Mock Support Tickets
 export const mockTickets: SupportTicket[] = [
@@ -306,4 +311,4 @@ export const mockTickets: SupportTicket[] = [
     createdAt: new Date("2024-12-19"),
     updatedAt: new Date("2024-12-19"),
   },
-]
+];
