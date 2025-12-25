@@ -74,7 +74,15 @@ export default function SignInPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="password">Password</Label>
+                <Link
+                  href="/forgot-password"
+                  className="text-xs text-primary hover:underline font-medium"
+                >
+                  Forgot password?
+                </Link>
+              </div>
               <Input
                 id="password"
                 type="password"
@@ -97,18 +105,6 @@ export default function SignInPage() {
             >
               Sign up
             </Link>
-          </div>
-
-          <div className="mt-6 space-y-2 rounded-lg bg-muted p-4">
-            <p className="text-sm font-medium text-muted-foreground">
-              Demo Accounts:
-            </p>
-            <div className="space-y-1 text-xs text-muted-foreground">
-              <p>Admin: admin@crm.com / admin123</p>
-              <p>Manager: manager@crm.com / manager123</p>
-              <p>Sales: sales@crm.com / sales123</p>
-              <p>Support: support@crm.com / support123</p>
-            </div>
           </div>
         </CardContent>
       </Card>

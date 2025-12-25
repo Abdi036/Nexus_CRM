@@ -18,6 +18,7 @@ import {
   type TicketPriority,
   type TicketStatus,
 } from "./api";
+import { useAuth } from "./auth-context";
 
 // Helper to get ID from object or string
 const getId = (obj: { _id: string } | string | null | undefined): string | undefined => {
@@ -183,9 +184,11 @@ export function CRMStoreProvider({ children }: { children: React.ReactNode }) {
   const [tickets, setTickets] = useState<FrontendTicket[]>([]);
   const [users, setUsers] = useState<FrontendUser[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { isAuthenticated } = useAuth(); // Use auth context
 
   // Fetch all data
   const refreshData = useCallback(async () => {
+    
     setIsLoading(true);
     try {
       const [customersRes, leadsRes, interactionsRes, ticketsRes] = await Promise.all([
@@ -224,15 +227,20 @@ export function CRMStoreProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  // Load data on mount
+  // Load data when authenticated
   useEffect(() => {
-    const token = localStorage.getItem("crm_token");
-    if (token) {
+    if (isAuthenticated) {
       refreshData();
     } else {
+      // Clear data when not authenticated
+      setCustomers([]);
+      setLeads([]);
+      setInteractions([]);
+      setTickets([]);
+      setUsers([]);
       setIsLoading(false);
     }
-  }, [refreshData]);
+  }, [isAuthenticated, refreshData]);
 
   // Customer operations
   const addCustomer = async (customer: Omit<FrontendCustomer, "id" | "createdAt">) => {

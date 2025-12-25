@@ -120,21 +120,7 @@ export default function LandingPage() {
                 </Button>
               ) : (
                 <>
-                  <Button
-                    asChild
-                    size="lg"
-                    className="bg-emerald-400 text-slate-950 hover:bg-emerald-300"
-                  >
-                    <Link href="/signup">Start free</Link>
-                  </Button>
-                  <Button
-                    asChild
-                    size="lg"
-                    variant="outline"
-                    className="border-white/30 bg-white/5 text-white hover:bg-white/10"
-                  >
-                    <Link href="/signin">Sign in</Link>
-                  </Button>
+                  <div></div>
                 </>
               )}
             </div>

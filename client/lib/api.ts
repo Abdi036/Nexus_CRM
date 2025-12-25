@@ -158,6 +158,28 @@ export const authApi = {
     return response;
   },
 
+  forgotPassword: async (email: string) => {
+    return apiCall<{ success: boolean; message: string; resetUrl?: string }>('/auth/forgot-password', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    });
+  },
+
+  resetPassword: async (token: string, password: string) => {
+    const response = await apiCall<{ success: boolean; message: string; token?: string; user?: User }>(
+      '/auth/reset-password',
+      {
+        method: 'POST',
+        body: JSON.stringify({ token, password }),
+      }
+    );
+    if (response.success && response.token && response.user) {
+      localStorage.setItem('crm_token', response.token);
+      localStorage.setItem('crm_user', JSON.stringify(response.user));
+    }
+    return response;
+  },
+
   logout: () => {
     localStorage.removeItem('crm_token');
     localStorage.removeItem('crm_user');
