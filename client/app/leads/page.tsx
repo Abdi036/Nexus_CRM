@@ -90,32 +90,51 @@ export default function LeadsPage() {
       : leads;
 
   const salesReps = users.filter((u) => u.role === "sales_rep");
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (editingId) {
-      updateLead(editingId, formData);
-      toast({
-        title: "Lead Updated",
-        description: "Lead information has been updated.",
-      });
-      setEditingId(null);
-    } else {
-      addLead({ ...formData, createdBy: user.id });
-      toast({
-        title: "Lead Added",
-        description: "New lead has been added to the pipeline.",
-      });
-      setIsAddOpen(false);
-    }
-    setFormData({
-      name: "",
-      email: "",
-      phone: "",
-      company: "",
-      status: "new",
-      assignedTo: "",
+  if (user.role === "sales_rep" && !salesReps.some((u) => u.id === user.id)) {
+    salesReps.push({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      password: "",
+      createdAt: new Date(user.createdAt),
+      avatarUrl: user.avatarUrl,
     });
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      if (editingId) {
+        await updateLead(editingId, formData);
+        toast({
+          title: "Lead Updated",
+          description: "Lead information has been updated.",
+        });
+        setEditingId(null);
+      } else {
+        await addLead({ ...formData, createdBy: user.id });
+        toast({
+          title: "Lead Added",
+          description: "New lead has been added to the pipeline.",
+        });
+        setIsAddOpen(false);
+      }
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        company: "",
+        status: "new",
+        assignedTo: "",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to save lead. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleEdit = (lead: (typeof leads)[0]) => {
@@ -180,7 +199,9 @@ export default function LeadsPage() {
                   : "Manage your lead pipeline"}
               </p>
             </div>
-            {(user.role === "admin" || user.role === "sales_manager") && (
+            {(user.role === "admin" ||
+              user.role === "sales_manager" ||
+              user.role === "sales_rep") && (
               <Dialog
                 open={isAddOpen}
                 onOpenChange={(open) => {
@@ -365,7 +386,9 @@ export default function LeadsPage() {
                           </Badge>
                         </TableCell>
                         <TableCell>
-                          {assignedUser?.name || "Unassigned"}
+                          {lead.assignedUserName ||
+                            assignedUser?.name ||
+                            "Unassigned"}
                         </TableCell>
                         <TableCell>
                           {lead.createdAt.toLocaleDateString()}

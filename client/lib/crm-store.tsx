@@ -1,7 +1,13 @@
 "use client";
 
 import type React from "react";
-import { createContext, useContext, useState, useEffect, useCallback } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+} from "react";
 import {
   customersApi,
   leadsApi,
@@ -21,9 +27,11 @@ import {
 import { useAuth } from "./auth-context";
 
 // Helper to get ID from object or string
-const getId = (obj: { _id: string } | string | null | undefined): string | undefined => {
+const getId = (
+  obj: { _id: string } | string | null | undefined
+): string | undefined => {
   if (!obj) return undefined;
-  if (typeof obj === 'string') return obj;
+  if (typeof obj === "string") return obj;
   return obj._id;
 };
 
@@ -34,7 +42,7 @@ const transformCustomer = (customer: Customer) => ({
   email: customer.email,
   phone: customer.phone,
   company: customer.company,
-  createdBy: getId(customer.createdBy) || '',
+  createdBy: getId(customer.createdBy) || "",
   createdAt: new Date(customer.createdAt),
 });
 
@@ -46,15 +54,21 @@ const transformLead = (lead: Lead) => ({
   company: lead.company,
   status: lead.status,
   assignedTo: getId(lead.assignedTo),
-  createdBy: getId(lead.createdBy) || '',
+  assignedUserName:
+    typeof lead.assignedTo === "object" && lead.assignedTo
+      ? lead.assignedTo.name
+      : undefined,
+  createdBy: getId(lead.createdBy) || "",
   convertedToCustomerId: lead.convertedToCustomerId || undefined,
   createdAt: new Date(lead.createdAt),
 });
 
 const transformInteraction = (interaction: Interaction) => {
   const linkedIdObj = interaction.linkedId;
-  const linkedId = typeof linkedIdObj === 'string' ? linkedIdObj : linkedIdObj._id;
-  const linkedName = typeof linkedIdObj === 'object' ? linkedIdObj.name : undefined;
+  const linkedId =
+    typeof linkedIdObj === "string" ? linkedIdObj : linkedIdObj._id;
+  const linkedName =
+    typeof linkedIdObj === "object" ? linkedIdObj.name : undefined;
 
   return {
     id: interaction._id,
@@ -63,7 +77,7 @@ const transformInteraction = (interaction: Interaction) => {
     linkedTo: interaction.linkedTo,
     linkedId: linkedId,
     linkedName: linkedName,
-    createdBy: getId(interaction.createdBy) || '',
+    createdBy: getId(interaction.createdBy) || "",
     createdAt: new Date(interaction.createdAt),
   };
 };
@@ -74,9 +88,9 @@ const transformTicket = (ticket: Ticket) => ({
   description: ticket.description,
   priority: ticket.priority,
   status: ticket.status,
-  customerId: getId(ticket.customerId) || '',
+  customerId: getId(ticket.customerId) || "",
   assignedTo: getId(ticket.assignedTo),
-  createdBy: getId(ticket.createdBy) || '',
+  createdBy: getId(ticket.createdBy) || "",
   createdAt: new Date(ticket.createdAt),
   updatedAt: new Date(ticket.updatedAt),
 });
@@ -88,7 +102,7 @@ const transformUser = (user: User) => ({
   role: user.role,
   avatarUrl: user.avatarUrl,
   createdAt: new Date(user.createdAt),
-  password: '', // Password not returned from API
+  password: "", // Password not returned from API
 });
 
 // Frontend types (matching original mock-data types)
@@ -110,6 +124,7 @@ interface FrontendLead {
   company: string;
   status: LeadStatus;
   assignedTo?: string;
+  assignedUserName?: string;
   createdAt: Date;
   createdBy: string;
   convertedToCustomerId?: string;
@@ -152,8 +167,13 @@ interface FrontendUser {
 interface CRMStoreContextType {
   // Customers
   customers: FrontendCustomer[];
-  addCustomer: (customer: Omit<FrontendCustomer, "id" | "createdAt">) => Promise<void>;
-  updateCustomer: (id: string, customer: Partial<FrontendCustomer>) => Promise<void>;
+  addCustomer: (
+    customer: Omit<FrontendCustomer, "id" | "createdAt">
+  ) => Promise<void>;
+  updateCustomer: (
+    id: string,
+    customer: Partial<FrontendCustomer>
+  ) => Promise<void>;
   deleteCustomer: (id: string) => Promise<void>;
 
   // Leads
@@ -165,11 +185,15 @@ interface CRMStoreContextType {
 
   // Interactions
   interactions: FrontendInteraction[];
-  addInteraction: (interaction: Omit<FrontendInteraction, "id" | "createdAt">) => Promise<void>;
+  addInteraction: (
+    interaction: Omit<FrontendInteraction, "id" | "createdAt">
+  ) => Promise<void>;
 
   // Support Tickets
   tickets: FrontendTicket[];
-  addTicket: (ticket: Omit<FrontendTicket, "id" | "createdAt" | "updatedAt">) => Promise<void>;
+  addTicket: (
+    ticket: Omit<FrontendTicket, "id" | "createdAt" | "updatedAt">
+  ) => Promise<void>;
   updateTicket: (id: string, ticket: Partial<FrontendTicket>) => Promise<void>;
 
   // Users
@@ -183,7 +207,9 @@ interface CRMStoreContextType {
   refreshData: () => Promise<void>;
 }
 
-const CRMStoreContext = createContext<CRMStoreContextType | undefined>(undefined);
+const CRMStoreContext = createContext<CRMStoreContextType | undefined>(
+  undefined
+);
 
 export function CRMStoreProvider({ children }: { children: React.ReactNode }) {
   const [customers, setCustomers] = useState<FrontendCustomer[]>([]);
@@ -196,15 +222,19 @@ export function CRMStoreProvider({ children }: { children: React.ReactNode }) {
 
   // Fetch all data
   const refreshData = useCallback(async () => {
-    
     setIsLoading(true);
     try {
-      const [customersRes, leadsRes, interactionsRes, ticketsRes] = await Promise.all([
-        customersApi.getAll().catch(() => ({ success: false, customers: [] })),
-        leadsApi.getAll().catch(() => ({ success: false, leads: [] })),
-        interactionsApi.getAll().catch(() => ({ success: false, interactions: [] })),
-        ticketsApi.getAll().catch(() => ({ success: false, tickets: [] })),
-      ]);
+      const [customersRes, leadsRes, interactionsRes, ticketsRes] =
+        await Promise.all([
+          customersApi
+            .getAll()
+            .catch(() => ({ success: false, customers: [] })),
+          leadsApi.getAll().catch(() => ({ success: false, leads: [] })),
+          interactionsApi
+            .getAll()
+            .catch(() => ({ success: false, interactions: [] })),
+          ticketsApi.getAll().catch(() => ({ success: false, tickets: [] })),
+        ]);
 
       if (customersRes.success && customersRes.customers) {
         setCustomers(customersRes.customers.map(transformCustomer));
@@ -251,7 +281,9 @@ export function CRMStoreProvider({ children }: { children: React.ReactNode }) {
   }, [isAuthenticated, refreshData]);
 
   // Customer operations
-  const addCustomer = async (customer: Omit<FrontendCustomer, "id" | "createdAt">) => {
+  const addCustomer = async (
+    customer: Omit<FrontendCustomer, "id" | "createdAt">
+  ) => {
     try {
       const response = await customersApi.create({
         name: customer.name,
@@ -260,7 +292,7 @@ export function CRMStoreProvider({ children }: { children: React.ReactNode }) {
         company: customer.company,
       });
       if (response.success && response.customer) {
-        setCustomers(prev => [...prev, transformCustomer(response.customer)]);
+        setCustomers((prev) => [...prev, transformCustomer(response.customer)]);
       }
     } catch (error) {
       console.error("Error adding customer:", error);
@@ -268,12 +300,17 @@ export function CRMStoreProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const updateCustomer = async (id: string, updates: Partial<FrontendCustomer>) => {
+  const updateCustomer = async (
+    id: string,
+    updates: Partial<FrontendCustomer>
+  ) => {
     try {
       const response = await customersApi.update(id, updates);
       if (response.success && response.customer) {
-        setCustomers(prev => 
-          prev.map(c => c.id === id ? transformCustomer(response.customer) : c)
+        setCustomers((prev) =>
+          prev.map((c) =>
+            c.id === id ? transformCustomer(response.customer) : c
+          )
         );
       }
     } catch (error) {
@@ -286,7 +323,7 @@ export function CRMStoreProvider({ children }: { children: React.ReactNode }) {
     try {
       const response = await customersApi.delete(id);
       if (response.success) {
-        setCustomers(prev => prev.filter(c => c.id !== id));
+        setCustomers((prev) => prev.filter((c) => c.id !== id));
       }
     } catch (error) {
       console.error("Error deleting customer:", error);
@@ -306,7 +343,7 @@ export function CRMStoreProvider({ children }: { children: React.ReactNode }) {
         assignedTo: lead.assignedTo,
       });
       if (response.success && response.lead) {
-        setLeads(prev => [...prev, transformLead(response.lead)]);
+        setLeads((prev) => [...prev, transformLead(response.lead)]);
       }
     } catch (error) {
       console.error("Error adding lead:", error);
@@ -321,8 +358,8 @@ export function CRMStoreProvider({ children }: { children: React.ReactNode }) {
         assignedTo: updates.assignedTo || null,
       });
       if (response.success && response.lead) {
-        setLeads(prev => 
-          prev.map(l => l.id === id ? transformLead(response.lead) : l)
+        setLeads((prev) =>
+          prev.map((l) => (l.id === id ? transformLead(response.lead) : l))
         );
       }
     } catch (error) {
@@ -335,7 +372,7 @@ export function CRMStoreProvider({ children }: { children: React.ReactNode }) {
     try {
       const response = await leadsApi.delete(id);
       if (response.success) {
-        setLeads(prev => prev.filter(l => l.id !== id));
+        setLeads((prev) => prev.filter((l) => l.id !== id));
       }
     } catch (error) {
       console.error("Error deleting lead:", error);
@@ -348,11 +385,16 @@ export function CRMStoreProvider({ children }: { children: React.ReactNode }) {
       const response = await leadsApi.convertToCustomer(leadId);
       if (response.success) {
         if (response.customer) {
-          setCustomers(prev => [...prev, transformCustomer(response.customer)]);
+          setCustomers((prev) => [
+            ...prev,
+            transformCustomer(response.customer),
+          ]);
         }
         if (response.lead) {
-          setLeads(prev => 
-            prev.map(l => l.id === leadId ? transformLead(response.lead) : l)
+          setLeads((prev) =>
+            prev.map((l) =>
+              l.id === leadId ? transformLead(response.lead) : l
+            )
           );
         }
       }
@@ -363,7 +405,9 @@ export function CRMStoreProvider({ children }: { children: React.ReactNode }) {
   };
 
   // Interaction operations
-  const addInteraction = async (interaction: Omit<FrontendInteraction, "id" | "createdAt">) => {
+  const addInteraction = async (
+    interaction: Omit<FrontendInteraction, "id" | "createdAt">
+  ) => {
     try {
       const response = await interactionsApi.create({
         type: interaction.type,
@@ -372,7 +416,10 @@ export function CRMStoreProvider({ children }: { children: React.ReactNode }) {
         linkedId: interaction.linkedId,
       });
       if (response.success && response.interaction) {
-        setInteractions(prev => [...prev, transformInteraction(response.interaction)]);
+        setInteractions((prev) => [
+          ...prev,
+          transformInteraction(response.interaction),
+        ]);
       }
     } catch (error) {
       console.error("Error adding interaction:", error);
@@ -381,7 +428,9 @@ export function CRMStoreProvider({ children }: { children: React.ReactNode }) {
   };
 
   // Ticket operations
-  const addTicket = async (ticket: Omit<FrontendTicket, "id" | "createdAt" | "updatedAt">) => {
+  const addTicket = async (
+    ticket: Omit<FrontendTicket, "id" | "createdAt" | "updatedAt">
+  ) => {
     try {
       const response = await ticketsApi.create({
         title: ticket.title,
@@ -392,7 +441,7 @@ export function CRMStoreProvider({ children }: { children: React.ReactNode }) {
         assignedTo: ticket.assignedTo,
       });
       if (response.success && response.ticket) {
-        setTickets(prev => [...prev, transformTicket(response.ticket)]);
+        setTickets((prev) => [...prev, transformTicket(response.ticket)]);
       }
     } catch (error) {
       console.error("Error adding ticket:", error);
@@ -407,8 +456,8 @@ export function CRMStoreProvider({ children }: { children: React.ReactNode }) {
         assignedTo: updates.assignedTo || null,
       });
       if (response.success && response.ticket) {
-        setTickets(prev => 
-          prev.map(t => t.id === id ? transformTicket(response.ticket) : t)
+        setTickets((prev) =>
+          prev.map((t) => (t.id === id ? transformTicket(response.ticket) : t))
         );
       }
     } catch (error) {
@@ -427,7 +476,7 @@ export function CRMStoreProvider({ children }: { children: React.ReactNode }) {
         role: user.role,
       });
       if (response.success && response.user) {
-        setUsers(prev => [...prev, transformUser(response.user)]);
+        setUsers((prev) => [...prev, transformUser(response.user)]);
       }
     } catch (error) {
       console.error("Error adding user:", error);
@@ -439,8 +488,8 @@ export function CRMStoreProvider({ children }: { children: React.ReactNode }) {
     try {
       const response = await usersApi.update(id, updates);
       if (response.success && response.user) {
-        setUsers(prev => 
-          prev.map(u => u.id === id ? transformUser(response.user) : u)
+        setUsers((prev) =>
+          prev.map((u) => (u.id === id ? transformUser(response.user) : u))
         );
       }
     } catch (error) {
@@ -453,7 +502,7 @@ export function CRMStoreProvider({ children }: { children: React.ReactNode }) {
     try {
       const response = await usersApi.delete(id);
       if (response.success) {
-        setUsers(prev => prev.filter(u => u.id !== id));
+        setUsers((prev) => prev.filter((u) => u.id !== id));
       }
     } catch (error) {
       console.error("Error deleting user:", error);

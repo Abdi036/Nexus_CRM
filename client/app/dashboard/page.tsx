@@ -72,22 +72,22 @@ export default function DashboardPage() {
       {
         status: "New",
         count: filteredLeads.filter((l) => l.status === "new").length,
-        fill: "hsl(var(--chart-1))",
+        fill: "var(--chart-1)",
       },
       {
         status: "Contacted",
         count: filteredLeads.filter((l) => l.status === "contacted").length,
-        fill: "hsl(var(--chart-2))",
+        fill: "var(--chart-2)",
       },
       {
         status: "Qualified",
         count: filteredLeads.filter((l) => l.status === "qualified").length,
-        fill: "hsl(var(--chart-3))",
+        fill: "var(--chart-3)",
       },
       {
         status: "Converted",
         count: filteredLeads.filter((l) => l.status === "converted").length,
-        fill: "hsl(var(--chart-4))",
+        fill: "var(--chart-4)",
       },
     ];
 
@@ -96,17 +96,17 @@ export default function DashboardPage() {
       {
         priority: "Low",
         count: filteredTickets.filter((t) => t.priority === "low").length,
-        fill: "hsl(var(--chart-2))",
+        fill: "var(--chart-2)",
       },
       {
         priority: "Medium",
         count: filteredTickets.filter((t) => t.priority === "medium").length,
-        fill: "hsl(var(--chart-3))",
+        fill: "var(--chart-3)",
       },
       {
         priority: "High",
         count: filteredTickets.filter((t) => t.priority === "high").length,
-        fill: "hsl(var(--chart-1))",
+        fill: "var(--chart-1)",
       },
     ];
 
@@ -115,17 +115,17 @@ export default function DashboardPage() {
       {
         status: "Open",
         count: filteredTickets.filter((t) => t.status === "open").length,
-        fill: "hsl(var(--chart-1))",
+        fill: "var(--chart-1)",
       },
       {
         status: "In Progress",
         count: filteredTickets.filter((t) => t.status === "in_progress").length,
-        fill: "hsl(var(--chart-3))",
+        fill: "var(--chart-3)",
       },
       {
         status: "Closed",
         count: filteredTickets.filter((t) => t.status === "closed").length,
-        fill: "hsl(var(--chart-4))",
+        fill: "var(--chart-4)",
       },
     ];
 
@@ -134,17 +134,17 @@ export default function DashboardPage() {
       {
         type: "Call",
         count: interactions.filter((i) => i.type === "call").length,
-        fill: "hsl(var(--chart-1))",
+        fill: "var(--chart-1)",
       },
       {
         type: "Email",
         count: interactions.filter((i) => i.type === "email").length,
-        fill: "hsl(var(--chart-2))",
+        fill: "var(--chart-2)",
       },
       {
         type: "Meeting",
         count: interactions.filter((i) => i.type === "meeting").length,
-        fill: "hsl(var(--chart-3))",
+        fill: "var(--chart-3)",
       },
     ];
 
@@ -153,22 +153,22 @@ export default function DashboardPage() {
       {
         role: "Admin",
         count: users.filter((u) => u.role === "admin").length,
-        fill: "hsl(var(--chart-1))",
+        fill: "var(--chart-1)",
       },
       {
         role: "Manager",
         count: users.filter((u) => u.role === "sales_manager").length,
-        fill: "hsl(var(--chart-2))",
+        fill: "var(--chart-2)",
       },
       {
         role: "Sales Rep",
         count: users.filter((u) => u.role === "sales_rep").length,
-        fill: "hsl(var(--chart-3))",
+        fill: "var(--chart-3)",
       },
       {
         role: "Support",
         count: users.filter((u) => u.role === "support_agent").length,
-        fill: "hsl(var(--chart-4))",
+        fill: "var(--chart-4)",
       },
     ];
 
@@ -224,7 +224,10 @@ export default function DashboardPage() {
     },
     {
       title: user.role === "support_agent" ? "My Tickets" : "Open Tickets",
-      value: filteredTickets.filter((t) => t.status === "open").length,
+      value:
+        user.role === "support_agent"
+          ? filteredTickets.length
+          : filteredTickets.filter((t) => t.status === "open").length,
       icon: Ticket,
       description:
         user.role === "support_agent"
@@ -267,7 +270,7 @@ export default function DashboardPage() {
               },
               count: {
                 label: "Users",
-                color: "hsl(var(--chart-1))",
+                color: "var(--chart-1)",
               },
             }}
             className="h-75"
@@ -279,7 +282,7 @@ export default function DashboardPage() {
               <ChartTooltip content={<ChartTooltipContent />} />
               <Bar
                 dataKey="count"
-                fill="hsl(var(--chart-1))"
+                fill="var(--chart-1)"
                 radius={[8, 8, 0, 0]}
               />
             </BarChart>
@@ -302,15 +305,15 @@ export default function DashboardPage() {
               },
               leads: {
                 label: "Leads",
-                color: "hsl(var(--chart-1))",
+                color: "var(--chart-1)",
               },
               customers: {
                 label: "Customers",
-                color: "hsl(var(--chart-2))",
+                color: "var(--chart-2)",
               },
               interactions: {
                 label: "Interactions",
-                color: "hsl(var(--chart-3))",
+                color: "var(--chart-3)",
               },
             }}
             className="h-75"
@@ -324,19 +327,19 @@ export default function DashboardPage() {
               <Line
                 type="monotone"
                 dataKey="leads"
-                stroke="hsl(var(--chart-1))"
+                stroke="var(--chart-1)"
                 strokeWidth={2}
               />
               <Line
                 type="monotone"
                 dataKey="customers"
-                stroke="hsl(var(--chart-2))"
+                stroke="var(--chart-2)"
                 strokeWidth={2}
               />
               <Line
                 type="monotone"
                 dataKey="interactions"
-                stroke="hsl(var(--chart-3))"
+                stroke="var(--chart-3)"
                 strokeWidth={2}
               />
             </LineChart>
@@ -357,7 +360,7 @@ export default function DashboardPage() {
               },
               count: {
                 label: "Tickets",
-                color: "hsl(var(--chart-1))",
+                color: "var(--chart-1)",
               },
             }}
             className="h-75"
@@ -370,7 +373,7 @@ export default function DashboardPage() {
                 labelLine={false}
                 label={(entry) => `${entry.priority}: ${entry.count}`}
                 outerRadius={80}
-                fill="hsl(var(--chart-1))"
+                fill="var(--chart-1)"
                 dataKey="count"
               >
                 {chartData.ticketsByPriority.map((entry, index) => (
@@ -396,7 +399,7 @@ export default function DashboardPage() {
               },
               count: {
                 label: "Leads",
-                color: "hsl(var(--chart-1))",
+                color: "var(--chart-1)",
               },
             }}
             className="h-75"
@@ -406,11 +409,7 @@ export default function DashboardPage() {
               <XAxis dataKey="status" />
               <YAxis />
               <ChartTooltip content={<ChartTooltipContent />} />
-              <Bar
-                dataKey="count"
-                fill="hsl(var(--chart-1))"
-                radius={[8, 8, 0, 0]}
-              >
+              <Bar dataKey="count" fill="var(--chart-1)" radius={[8, 8, 0, 0]}>
                 {chartData.leadsByStatus.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={entry.fill} />
                 ))}
@@ -437,7 +436,7 @@ export default function DashboardPage() {
               },
               count: {
                 label: "Leads",
-                color: "hsl(var(--chart-1))",
+                color: "var(--chart-1)",
               },
             }}
             className="h-75"
@@ -450,7 +449,7 @@ export default function DashboardPage() {
                 labelLine={false}
                 label={(entry) => `${entry.status}: ${entry.count}`}
                 outerRadius={80}
-                fill="hsl(var(--chart-1))"
+                fill="var(--chart-1)"
                 dataKey="count"
               >
                 {chartData.leadsByStatus.map((entry, index) => (
@@ -476,7 +475,7 @@ export default function DashboardPage() {
               },
               count: {
                 label: "Interactions",
-                color: "hsl(var(--chart-1))",
+                color: "var(--chart-1)",
               },
             }}
             className="h-75"
@@ -486,11 +485,7 @@ export default function DashboardPage() {
               <XAxis dataKey="type" />
               <YAxis />
               <ChartTooltip content={<ChartTooltipContent />} />
-              <Bar
-                dataKey="count"
-                fill="hsl(var(--chart-1))"
-                radius={[8, 8, 0, 0]}
-              >
+              <Bar dataKey="count" fill="var(--chart-1)" radius={[8, 8, 0, 0]}>
                 {chartData.interactionsByType.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={entry.fill} />
                 ))}
@@ -513,11 +508,11 @@ export default function DashboardPage() {
               },
               leads: {
                 label: "Leads",
-                color: "hsl(var(--chart-1))",
+                color: "var(--chart-1)",
               },
               customers: {
                 label: "Customers",
-                color: "hsl(var(--chart-2))",
+                color: "var(--chart-2)",
               },
             }}
             className="h-75"
@@ -531,13 +526,13 @@ export default function DashboardPage() {
               <Line
                 type="monotone"
                 dataKey="leads"
-                stroke="hsl(var(--chart-1))"
+                stroke="var(--chart-1)"
                 strokeWidth={2}
               />
               <Line
                 type="monotone"
                 dataKey="customers"
-                stroke="hsl(var(--chart-2))"
+                stroke="var(--chart-2)"
                 strokeWidth={2}
               />
             </LineChart>
@@ -558,7 +553,7 @@ export default function DashboardPage() {
               },
               count: {
                 label: "Tickets",
-                color: "hsl(var(--chart-1))",
+                color: "var(--chart-1)",
               },
             }}
             className="h-75"
@@ -571,7 +566,7 @@ export default function DashboardPage() {
                 labelLine={false}
                 label={(entry) => `${entry.status}: ${entry.count}`}
                 outerRadius={80}
-                fill="hsl(var(--chart-1))"
+                fill="var(--chart-1)"
                 dataKey="count"
               >
                 {chartData.ticketsByStatus.map((entry, index) => (
@@ -601,7 +596,7 @@ export default function DashboardPage() {
               },
               count: {
                 label: "Leads",
-                color: "hsl(var(--chart-1))",
+                color: "var(--chart-1)",
               },
             }}
             className="h-75"
@@ -611,11 +606,7 @@ export default function DashboardPage() {
               <XAxis dataKey="status" />
               <YAxis />
               <ChartTooltip content={<ChartTooltipContent />} />
-              <Bar
-                dataKey="count"
-                fill="hsl(var(--chart-1))"
-                radius={[8, 8, 0, 0]}
-              >
+              <Bar dataKey="count" fill="var(--chart-1)" radius={[8, 8, 0, 0]}>
                 {chartData.leadsByStatus.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={entry.fill} />
                 ))}
@@ -638,7 +629,7 @@ export default function DashboardPage() {
               },
               count: {
                 label: "Interactions",
-                color: "hsl(var(--chart-1))",
+                color: "var(--chart-1)",
               },
             }}
             className="h-75"
@@ -651,7 +642,7 @@ export default function DashboardPage() {
                 labelLine={false}
                 label={(entry) => `${entry.type}: ${entry.count}`}
                 outerRadius={80}
-                fill="hsl(var(--chart-1))"
+                fill="var(--chart-1)"
                 dataKey="count"
               >
                 {chartData.interactionsByType.map((entry, index) => (
@@ -679,11 +670,11 @@ export default function DashboardPage() {
               },
               leads: {
                 label: "Leads",
-                color: "hsl(var(--chart-1))",
+                color: "var(--chart-1)",
               },
               interactions: {
                 label: "Interactions",
-                color: "hsl(var(--chart-3))",
+                color: "var(--chart-3)",
               },
             }}
             className="h-75"
@@ -697,13 +688,13 @@ export default function DashboardPage() {
               <Line
                 type="monotone"
                 dataKey="leads"
-                stroke="hsl(var(--chart-1))"
+                stroke="var(--chart-1)"
                 strokeWidth={2}
               />
               <Line
                 type="monotone"
                 dataKey="interactions"
-                stroke="hsl(var(--chart-3))"
+                stroke="var(--chart-3)"
                 strokeWidth={2}
               />
             </LineChart>
@@ -728,7 +719,7 @@ export default function DashboardPage() {
               },
               count: {
                 label: "Tickets",
-                color: "hsl(var(--chart-1))",
+                color: "var(--chart-1)",
               },
             }}
             className="h-75"
@@ -741,7 +732,7 @@ export default function DashboardPage() {
                 labelLine={false}
                 label={(entry) => `${entry.status}: ${entry.count}`}
                 outerRadius={80}
-                fill="hsl(var(--chart-1))"
+                fill="var(--chart-1)"
                 dataKey="count"
               >
                 {chartData.ticketsByStatus.map((entry, index) => (
@@ -767,7 +758,7 @@ export default function DashboardPage() {
               },
               count: {
                 label: "Tickets",
-                color: "hsl(var(--chart-1))",
+                color: "var(--chart-1)",
               },
             }}
             className="h-75"
@@ -777,11 +768,7 @@ export default function DashboardPage() {
               <XAxis dataKey="priority" />
               <YAxis />
               <ChartTooltip content={<ChartTooltipContent />} />
-              <Bar
-                dataKey="count"
-                fill="hsl(var(--chart-1))"
-                radius={[8, 8, 0, 0]}
-              >
+              <Bar dataKey="count" fill="var(--chart-1)" radius={[8, 8, 0, 0]}>
                 {chartData.ticketsByPriority.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={entry.fill} />
                 ))}
@@ -792,7 +779,6 @@ export default function DashboardPage() {
       </Card>
     </>
   );
-
   return (
     <div className="flex min-h-screen bg-transparent pl-64 backdrop-blur-[2px]">
       <AppSidebar />
