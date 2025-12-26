@@ -46,7 +46,7 @@ export interface Interaction {
   type: InteractionType;
   notes: string;
   linkedTo: 'lead' | 'customer';
-  linkedId: string;
+  linkedId: { _id: string; name: string; email: string; company?: string } | string;
   createdBy: { _id: string; name: string; email: string } | string;
   createdAt: string;
 }

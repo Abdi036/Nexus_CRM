@@ -38,8 +38,8 @@ const interactionSchema = new mongoose.Schema({
   }
 });
 
-// Set linkedModel based on linkedTo before save
-interactionSchema.pre('save', function(next) {
+// Set linkedModel based on linkedTo before validation
+interactionSchema.pre('validate', function(next) {
   if (this.linkedTo === 'lead') {
     this.linkedModel = 'Lead';
   } else if (this.linkedTo === 'customer') {

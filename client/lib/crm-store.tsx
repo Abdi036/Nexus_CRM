@@ -51,15 +51,22 @@ const transformLead = (lead: Lead) => ({
   createdAt: new Date(lead.createdAt),
 });
 
-const transformInteraction = (interaction: Interaction) => ({
-  id: interaction._id,
-  type: interaction.type,
-  notes: interaction.notes,
-  linkedTo: interaction.linkedTo,
-  linkedId: interaction.linkedId,
-  createdBy: getId(interaction.createdBy) || '',
-  createdAt: new Date(interaction.createdAt),
-});
+const transformInteraction = (interaction: Interaction) => {
+  const linkedIdObj = interaction.linkedId;
+  const linkedId = typeof linkedIdObj === 'string' ? linkedIdObj : linkedIdObj._id;
+  const linkedName = typeof linkedIdObj === 'object' ? linkedIdObj.name : undefined;
+
+  return {
+    id: interaction._id,
+    type: interaction.type,
+    notes: interaction.notes,
+    linkedTo: interaction.linkedTo,
+    linkedId: linkedId,
+    linkedName: linkedName,
+    createdBy: getId(interaction.createdBy) || '',
+    createdAt: new Date(interaction.createdAt),
+  };
+};
 
 const transformTicket = (ticket: Ticket) => ({
   id: ticket._id,
@@ -114,6 +121,7 @@ interface FrontendInteraction {
   notes: string;
   linkedTo: "lead" | "customer";
   linkedId: string;
+  linkedName?: string;
   createdBy: string;
   createdAt: Date;
 }

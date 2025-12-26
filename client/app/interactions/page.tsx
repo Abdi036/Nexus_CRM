@@ -66,15 +66,23 @@ export default function InteractionsPage() {
 
   if (!user) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    addInteraction({ ...formData, createdBy: user.id });
-    toast({
-      title: "Interaction Logged",
-      description: "Interaction has been recorded successfully.",
-    });
-    setIsAddOpen(false);
-    setFormData({ type: "call", notes: "", linkedTo: "lead", linkedId: "" });
+    try {
+      await addInteraction({ ...formData, createdBy: user.id });
+      toast({
+        title: "Interaction Logged",
+        description: "Interaction has been recorded successfully.",
+      });
+      setIsAddOpen(false);
+      setFormData({ type: "call", notes: "", linkedTo: "lead", linkedId: "" });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to log interaction. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const getTypeIcon = (type: InteractionType) => {
@@ -99,11 +107,18 @@ export default function InteractionsPage() {
     }
   };
 
-  const getLinkedName = (linkedTo: "lead" | "customer", linkedId: string) => {
-    if (linkedTo === "lead") {
-      return leads.find((l) => l.id === linkedId)?.name || "Unknown Lead";
+  const getLinkedName = (interaction: (typeof interactions)[0]) => {
+    if (interaction.linkedName) return interaction.linkedName;
+
+    if (interaction.linkedTo === "lead") {
+      return (
+        leads.find((l) => l.id === interaction.linkedId)?.name || "Unknown Lead"
+      );
     }
-    return customers.find((c) => c.id === linkedId)?.name || "Unknown Customer";
+    return (
+      customers.find((c) => c.id === interaction.linkedId)?.name ||
+      "Unknown Customer"
+    );
   };
 
   const availableLeads =
@@ -265,10 +280,7 @@ export default function InteractionsPage() {
                         <TableCell>
                           <div>
                             <p className="font-medium">
-                              {getLinkedName(
-                                interaction.linkedTo,
-                                interaction.linkedId
-                              )}
+                              {getLinkedName(interaction)}
                             </p>
                             <p className="text-sm text-muted-foreground capitalize">
                               {interaction.linkedTo}
