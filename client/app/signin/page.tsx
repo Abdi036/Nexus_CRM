@@ -67,7 +67,7 @@ export default function SignInPage() {
               <Input
                 id="email"
                 type="email"
-                placeholder="admin@crm.com"
+                placeholder="email@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
